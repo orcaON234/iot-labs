@@ -1,17 +1,8 @@
 {
-  "name": "tutorial",
+  "name": "picar-remote-console",
   "version": "1.0.0",
+  "description": "Electron TCP control panel for the CS 437 PiCar-X networking lab",
   "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "electron": "^10.1.6"
-  },
-  "dependencies": {},
-  "description": ""
+  "scripts": { "start": "electron ." },
+  "devDependencies": { "electron": "latest" }
 }
