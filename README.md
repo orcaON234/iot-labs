@@ -9,6 +9,9 @@ Simple Electron control panel for the CS 437 IoT Networking lab.
 3. Run `npm start`.
 4. Enter the Raspberry Pi's Wi-Fi IP address and the TCP port (default `65432`), then connect.
 
+Current wifi ip: 100.71.20.51.Ensure the Port is 65432.
+
+
 The computer and Pi must be on a network that allows them to reach each other. The Pi server must listen on the same port and accept connections from the network.
 
 ## Message contract used by this frontend
