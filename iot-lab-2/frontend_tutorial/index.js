@@ -1,5 +1,5 @@
 var server_port = 65432;
-var server_addr = "192.168.3.49";   // the IP address of your Raspberry PI
+var server_addr = "100.71.20.51";   // the IP address of your Raspberry PI
 
 function client(){
     
@@ -25,6 +25,10 @@ function client(){
         console.log('disconnected from server');
     });
 
+    client.on('error', (err) => {
+        console.error('Connection error:', err);
+        document.getElementById("greet_from_server").innerHTML = "Error connecting to server: " + err.message;
+    });
 
 }
 
@@ -35,7 +39,7 @@ function greeting(){
     // update the content in html
     document.getElementById("greet").innerHTML = "Hello " + name + " !";
     // send the data to the server 
-    to_server(name);
     client();
 
 }
+
