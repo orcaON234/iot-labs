@@ -16,6 +16,7 @@ let receiveBuffer = '';
 let statusTimer = null;
 let activeCommand = 'stop';
 let toastTimer;
+const STEERING_LIMIT_DEG = 35;
 
 function setState(state, message) {
   connected = state === 'connected';
@@ -135,18 +136,24 @@ function commandFor(button) {
   if (!connected) { toast('Connect to the Raspberry Pi first.'); return; }
   activeCommand = command;
   button.classList.add('pressed');
+  const steeringAngle = command === 'left' ? -STEERING_LIMIT_DEG
+    : command === 'right' ? STEERING_LIMIT_DEG : 0;
   if (command === 'forward' || command === 'backward') $('movingText').textContent = command;
   if (command === 'left' || command === 'right') $('turningText').textContent = command;
   if (command === 'stop') { $('movingText').textContent = 'Stopped'; $('turningText').textContent = 'No'; }
-  send({ type: 'command', command, speed: 45 });
+  if (command === 'forward' || command === 'backward' || command === 'stop') $('turningText').textContent = 'No';
+  send({ type: 'command', command, steering_angle: steeringAngle, speed: 45 });
 }
 
 function releaseCommand(button) {
   if (!button.classList.contains('pressed')) return;
   button.classList.remove('pressed');
+  // Steering is a servo position, so releasing a left/right button should not
+  // immediately send stop and cancel the requested steering angle.
+  if (button.dataset.command === 'left' || button.dataset.command === 'right') return;
   if (button.dataset.command !== 'stop' && activeCommand === button.dataset.command && connected) {
     activeCommand = 'stop';
-    send({ type: 'command', command: 'stop' });
+    send({ type: 'command', command: 'stop', steering_angle: 0 });
     $('movingText').textContent = 'Stopped';
     $('turningText').textContent = 'No';
   }
