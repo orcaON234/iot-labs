@@ -1,17 +1,56 @@
-<html>
-
-<script src="index.js"></script>
-
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PiCar Remote</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b111a;--panel:#121c29;--line:rgba(173,195,218,.14);--text:#eaf0f6;--muted:#8796a9;--orange:#ff8a4c;--cyan:#6bd9e8;--green:#62d6a0;--red:#ff737d}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:28px;background:radial-gradient(ellipse at 50% 0,rgba(37,82,105,.24),transparent 55%),var(--bg);color:var(--text);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    .app{width:min(860px,100%)}header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;gap:15px}.kicker{font-size:10px;text-transform:uppercase;letter-spacing:.19em;color:var(--cyan)}h1{font-size:25px;letter-spacing:-.04em;margin:5px 0 0;font-weight:650}.subtitle{font-size:11px;color:var(--muted);margin-top:4px}.mode{border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:#b6c2d0;font-size:10px;white-space:nowrap}
+    .connect{display:flex;align-items:end;gap:10px;padding:15px;border:1px solid var(--line);border-radius:14px;background:rgba(18,28,41,.8);margin-bottom:14px}.field{display:grid;gap:5px}.field label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}input{height:35px;width:180px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#0c141e;color:var(--text);outline:none;font:12px ui-monospace,SFMono-Regular,Menlo,monospace}input:focus{border-color:rgba(107,217,232,.6);box-shadow:0 0 0 3px rgba(107,217,232,.08)}#port{width:92px}.connect-btn{height:35px;border:1px solid rgba(255,138,76,.35);border-radius:8px;background:linear-gradient(135deg,#ff985e,#ff7a40);color:#1b1512;font-weight:700;padding:0 15px;cursor:pointer;transition:.18s}.connect-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.connect-btn.disconnect{background:#26313d;color:#d1dbe5;border-color:var(--line)}.connection-state{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--muted);font-size:10px;min-width:128px}.dot{height:7px;width:7px;border-radius:50%;background:#7c8999}.dot.connected{background:var(--green);box-shadow:0 0 11px rgba(98,214,160,.6)}.dot.error{background:var(--red)}
+    .panel{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,rgba(20,31,46,.97),rgba(14,22,33,.97));box-shadow:0 22px 65px rgba(0,0,0,.27);transform-style:preserve-3d;transition:transform .18s ease,border-color .22s,box-shadow .22s}.panel::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(107,217,232,.1),transparent 48%);transition:opacity .22s}.panel:hover{border-color:rgba(107,217,232,.3);box-shadow:0 24px 70px rgba(0,0,0,.33),0 0 0 1px rgba(107,217,232,.035)}.panel:hover::before{opacity:1}.panel-content{position:relative;z-index:1;display:grid;grid-template-columns:minmax(270px,1fr) minmax(250px,.9fr);gap:30px;padding:24px;align-items:center}.section-title{font-size:12px;font-weight:650}.section-sub{font-size:10px;color:var(--muted);margin-top:4px}.drive-area{display:grid;place-items:center;padding:12px 0 8px}.dpad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,54px);gap:8px}.key{display:grid;place-items:center;border:1px solid rgba(173,195,218,.18);border-radius:12px;background:rgba(255,255,255,.04);color:#bdcbd9;cursor:pointer;user-select:none;touch-action:none;transition:background .14s,border-color .14s,color .14s,transform .14s,box-shadow .14s}.key svg{height:20px;width:20px}.key:hover{color:#d8faff;background:rgba(107,217,232,.1);border-color:rgba(107,217,232,.45);transform:translateY(-2px)}.key:active,.key.pressed{background:var(--orange);border-color:var(--orange);color:#1c1714;transform:scale(.96);box-shadow:0 5px 20px rgba(255,138,76,.2)}.key.stop{background:rgba(255,115,125,.08);color:#ff9aa2;border-color:rgba(255,115,125,.24)}.key.stop:hover{background:rgba(255,115,125,.18);border-color:var(--red)}.empty{visibility:hidden}.hint{color:#6f7e91;font-size:9px;text-align:center;margin-top:13px}
+    .info{border:1px solid rgba(173,195,218,.11);border-radius:13px;background:rgba(5,10,17,.22);padding:17px 18px}.info-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:5px}.info-head em{font-style:normal;font-size:9px;color:#ffbe94;border:1px solid rgba(255,138,76,.22);background:rgba(255,138,76,.08);border-radius:999px;padding:4px 7px}.info-title{font-size:13px;font-style:italic;font-weight:620}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid rgba(173,195,218,.08)}.row:last-of-type{border-bottom:0}.row span{color:var(--muted);font-size:11px}.row strong{font-size:12px;font-weight:580;text-align:right}.battery{display:flex;align-items:center;gap:7px}.battery-shell{width:27px;height:13px;border:1px solid #91a4b8;border-radius:3px;padding:2px;position:relative}.battery-shell::after{content:"";position:absolute;right:-4px;top:3px;width:2px;height:5px;background:#91a4b8;border-radius:0 2px 2px 0}.battery-fill{height:100%;width:0;background:var(--green);border-radius:1px;transition:width .3s}.response{min-height:25px;margin-top:10px;color:#91a1b5;font-size:9px;overflow-wrap:anywhere}.response.ok{color:var(--green)}.response.error{color:#ff989f}
+    .footer{display:flex;justify-content:space-between;gap:12px;color:#617084;font-size:9px;margin-top:12px;padding:0 3px}.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,12px);opacity:0;pointer-events:none;padding:10px 13px;background:#192633;border:1px solid var(--line);border-radius:9px;color:#dce8f1;font-size:10px;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:620px){body{padding:18px 12px;align-items:start}.connect{flex-wrap:wrap;align-items:end}.field{flex:1}.field input,#port{width:100%}.connection-state{margin:5px 0 0;width:100%}.panel-content{grid-template-columns:1fr;gap:20px;padding:19px}.dpad{grid-template-columns:repeat(3,56px);grid-template-rows:repeat(3,52px)}header{align-items:flex-start}h1{font-size:22px}.footer{flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}
+  </style>
+</head>
 <body>
-<h1>My First Website</h1>
-<p>Hello IoT!</p>
-
-My name is: <input id="myName" type="text" placeholder="name"/>
-<button class="btn btn-success" onclick="greeting()">Submit</button>
-<br>
-<span id="greet"> </span>
-<br>
-<span id="greet_from_server"> </span>
+  <main class="app">
+    <header><div><div class="kicker">CS 437 · IoT Networking</div><h1>PiCar Remote</h1><div class="subtitle">Connect to the Raspberry Pi and control your car.</div></div><div class="mode">TCP · Wi-Fi</div></header>
+    <section class="connect" aria-label="Raspberry Pi connection settings">
+      <div class="field"><label for="host">Raspberry Pi IP</label><input id="host" type="text" placeholder="e.g. 192.168.1.42" autocomplete="off" /></div>
+      <div class="field"><label for="port">Port</label><input id="port" type="number" value="65432" min="1" max="65535" /></div>
+      <button class="connect-btn" id="connectBtn">Connect</button>
+      <div class="connection-state"><i class="dot" id="stateDot"></i><span id="stateText">Not connected</span></div>
+    </section>
+    <section class="panel" id="mainPanel">
+      <div class="panel-content">
+        <section><div class="section-title">Driving controls</div><div class="section-sub">Press and hold a direction. Release to stop.</div>
+          <div class="drive-area"><div class="dpad" aria-label="Car direction controls">
+            <button class="key empty" tabindex="-1"></button>
+            <button class="key" data-command="forward" aria-label="Move forward"><svg viewBox="0 0 24 24" fill="none"><path d="m6 14 6-6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="key empty" tabindex="-1"></button>
+            <button class="key" data-command="left" aria-label="Turn left"><svg viewBox="0 0 24 24" fill="none"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="key stop" data-command="stop" aria-label="Stop"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+            <button class="key" data-command="right" aria-label="Turn right"><svg viewBox="0 0 24 24" fill="none"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="key empty" tabindex="-1"></button>
+            <button class="key" data-command="backward" aria-label="Move backward"><svg viewBox="0 0 24 24" fill="none"><path d="m6 10 6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="key empty" tabindex="-1"></button>
+          </div><div class="hint">Keyboard: ↑ ↓ ← → · Space to stop</div></div>
+        </section>
+        <section class="info" id="infoCard"><div class="info-head"><span class="info-title">Car information</span><em id="dataTag">WAITING</em></div>
+          <div class="row"><span>Battery</span><strong class="battery"><span id="batteryText">—</span><span class="battery-shell"><i class="battery-fill" id="batteryFill"></i></span></strong></div>
+          <div class="row"><span>Moving</span><strong id="movingText">Stopped</strong></div>
+          <div class="row"><span>Turning</span><strong id="turningText">No</strong></div>
+          <div class="response" id="responseText">Enter the Pi's IP and port, then connect.</div>
+        </section>
+      </div>
+    </section>
+    <div class="footer"><span>Commands use newline-delimited JSON over TCP.</span><span>Pi and computer must be on the same reachable Wi-Fi network.</span></div>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="index.js"></script>
 </body>
-
 </html>
